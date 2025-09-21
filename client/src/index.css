@@ -1,0 +1,147 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(60, 13%, 93%); /* #F5F5DC beige */
+  --foreground: hsl(120, 25%, 25%); /* #2F4F2F dark green */
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(120, 25%, 25%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(120, 25%, 25%);
+  --primary: hsl(120, 61%, 34%); /* #228B22 forest green */
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(120, 25%, 64%); /* #8FBC8F sage green */
+  --secondary-foreground: hsl(120, 25%, 25%);
+  --muted: hsl(120, 13%, 85%);
+  --muted-foreground: hsl(120, 25%, 45%);
+  --accent: hsl(120, 25%, 64%);
+  --accent-foreground: hsl(120, 25%, 25%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --success: hsl(120, 61%, 50%); /* #32CD32 lime green */
+  --success-foreground: hsl(0, 0%, 100%);
+  --warning: hsl(43, 75%, 47%); /* #DAA520 goldenrod */
+  --warning-foreground: hsl(0, 0%, 100%);
+  --border: hsl(120, 13%, 80%);
+  --input: hsl(120, 13%, 90%);
+  --ring: hsl(120, 61%, 34%);
+  --chart-1: hsl(120, 61%, 34%);
+  --chart-2: hsl(120, 61%, 50%);
+  --chart-3: hsl(43, 75%, 47%);
+  --chart-4: hsl(120, 25%, 64%);
+  --chart-5: hsl(120, 25%, 45%);
+  --sidebar: hsl(120, 13%, 85%);
+  --sidebar-foreground: hsl(120, 25%, 25%);
+  --sidebar-primary: hsl(120, 61%, 34%);
+  --sidebar-primary-foreground: hsl(0, 0%, 100%);
+  --sidebar-accent: hsl(120, 25%, 64%);
+  --sidebar-accent-foreground: hsl(120, 25%, 25%);
+  --sidebar-border: hsl(120, 13%, 80%);
+  --sidebar-ring: hsl(120, 61%, 34%);
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 0.75rem;
+  --shadow-2xs: 0px 2px 0px 0px hsl(120, 61%, 34% / 0.00);
+  --shadow-xs: 0px 2px 0px 0px hsl(120, 61%, 34% / 0.00);
+  --shadow-sm: 0px 2px 0px 0px hsl(120, 61%, 34% / 0.00), 0px 1px 2px -1px hsl(120, 61%, 34% / 0.00);
+  --shadow: 0px 2px 0px 0px hsl(120, 61%, 34% / 0.00), 0px 1px 2px -1px hsl(120, 61%, 34% / 0.00);
+  --shadow-md: 0px 2px 0px 0px hsl(120, 61%, 34% / 0.00), 0px 2px 4px -1px hsl(120, 61%, 34% / 0.00);
+  --shadow-lg: 0px 2px 0px 0px hsl(120, 61%, 34% / 0.00), 0px 4px 6px -1px hsl(120, 61%, 34% / 0.00);
+  --shadow-xl: 0px 2px 0px 0px hsl(120, 61%, 34% / 0.00), 0px 8px 10px -1px hsl(120, 61%, 34% / 0.00);
+  --shadow-2xl: 0px 2px 0px 0px hsl(120, 61%, 34% / 0.00);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+.dark {
+  --background: hsl(120, 25%, 15%);
+  --foreground: hsl(120, 13%, 85%);
+  --card: hsl(120, 25%, 20%);
+  --card-foreground: hsl(120, 13%, 85%);
+  --popover: hsl(120, 25%, 15%);
+  --popover-foreground: hsl(120, 13%, 85%);
+  --primary: hsl(120, 61%, 40%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(120, 25%, 30%);
+  --secondary-foreground: hsl(120, 13%, 85%);
+  --muted: hsl(120, 25%, 25%);
+  --muted-foreground: hsl(120, 13%, 60%);
+  --accent: hsl(120, 25%, 30%);
+  --accent-foreground: hsl(120, 13%, 85%);
+  --destructive: hsl(0, 62%, 30%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --success: hsl(120, 61%, 40%);
+  --success-foreground: hsl(0, 0%, 100%);
+  --warning: hsl(43, 75%, 35%);
+  --warning-foreground: hsl(0, 0%, 100%);
+  --border: hsl(120, 25%, 35%);
+  --input: hsl(120, 25%, 25%);
+  --ring: hsl(120, 61%, 40%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* PWA specific styles */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.field-input {
+  font-size: 16px; /* Prevents zoom on iOS */
+}
+
+.photo-preview {
+  aspect-ratio: 4/3;
+  object-fit: cover;
+}
+
+.status-online {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Ensure high contrast for outdoor visibility */
+.bg-primary {
+  background-color: var(--primary);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.bg-success {
+  background-color: var(--success);
+}
+
+.text-success {
+  color: var(--success);
+}
+
+.bg-warning {
+  background-color: var(--warning);
+}
+
+.text-warning {
+  color: var(--warning);
+}

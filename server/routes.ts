@@ -34,7 +34,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create new collection
   app.post("/api/collection", upload.single('photo'), async (req, res) => {
     try {
-      const validatedData = insertCollectionSchema.parse(req.body);
+      // Convert string numbers from FormData to actual numbers
+      const processedBody = {
+        ...req.body,
+        latitude: parseFloat(req.body.latitude),
+        longitude: parseFloat(req.body.longitude),
+        accuracy: req.body.accuracy ? parseFloat(req.body.accuracy) : null,
+        moistureContent: req.body.moistureContent ? parseFloat(req.body.moistureContent) : null,
+        weight: parseFloat(req.body.weight),
+      };
+
+      const validatedData = insertCollectionSchema.parse(processedBody);
       
       // Add photo URL if file was uploaded
       if ((req as any).file) {

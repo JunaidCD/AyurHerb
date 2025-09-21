@@ -32,7 +32,9 @@ export async function setupVite(app: Express, server: Server) {
     customLogger: {
       ...viteLogger,
       error: (msg, options) => {
-        viteLogger.error(msg, options);
+        if (viteLogger?.error) {
+          viteLogger.error(msg, options);
+        }
         process.exit(1);
       },
     },
@@ -61,7 +63,9 @@ export async function setupVite(app: Express, server: Server) {
       const page = await vite.transformIndexHtml(url, template);
       res.status(200).set({ "Content-Type": "text/html" }).end(page);
     } catch (e) {
-      vite.ssrFixStacktrace(e as Error);
+      if (vite?.ssrFixStacktrace && e instanceof Error) {
+        vite.ssrFixStacktrace(e);
+      }
       next(e);
     }
   });

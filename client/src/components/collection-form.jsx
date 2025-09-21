@@ -16,6 +16,7 @@ import { useOffline } from "@/hooks/use-offline";
 import { apiRequest } from "@/lib/queryClient";
 import { insertCollectionSchema } from "@shared/schema";
 import { z } from "zod";
+import DigitalClock from "@/components/digital-clock";
 
 const formSchema = insertCollectionSchema.extend({
   qualityGrade: z.enum(["premium", "standard", "commercial", "low"]),
@@ -25,7 +26,7 @@ export default function CollectionForm() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { isOffline } = useOffline();
-  const { coordinates, accuracy, refreshLocation } = useGPS();
+  const { coordinates, accuracy, isLoading, refreshLocation } = useGPS();
   const { capturePhoto, selectFromGallery } = useCamera();
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -55,6 +56,26 @@ export default function CollectionForm() {
       form.setValue("accuracy", accuracy || 0);
     }
   }, [coordinates, accuracy, form]);
+
+  // Show toast when location is refreshed
+  const [previousCoordinates, setPreviousCoordinates] = useState(null);
+  useEffect(() => {
+    if (coordinates && previousCoordinates && !isLoading) {
+      // Check if coordinates actually changed
+      const latChanged = Math.abs(coordinates.latitude - previousCoordinates.latitude) > 0.000001;
+      const lngChanged = Math.abs(coordinates.longitude - previousCoordinates.longitude) > 0.000001;
+      
+      if (latChanged || lngChanged) {
+        toast({
+          title: "Location Updated!",
+          description: `New coordinates: ${coordinates.latitude.toFixed(6)}°, ${coordinates.longitude.toFixed(6)}°`,
+        });
+      }
+    }
+    if (coordinates) {
+      setPreviousCoordinates(coordinates);
+    }
+  }, [coordinates, previousCoordinates, isLoading, toast]);
 
   const submitMutation = useMutation({
     mutationFn: async (data) => {
@@ -227,11 +248,12 @@ export default function CollectionForm() {
                   variant="ghost" 
                   size="sm"
                   onClick={refreshLocation}
+                  disabled={isLoading}
                   className="text-primary hover:text-primary/80 touch-target"
                   data-testid="button-refresh-location"
                 >
-                  <i className="fas fa-sync-alt mr-1"></i>
-                  Refresh
+                  <i className={`fas ${isLoading ? 'fa-spinner fa-spin' : 'fa-sync-alt'} mr-1`}></i>
+                  {isLoading ? 'Refreshing...' : 'Refresh'}
                 </Button>
               </div>
               <div className="text-sm text-muted-foreground space-y-1">
@@ -249,9 +271,7 @@ export default function CollectionForm() {
             
             <div className="bg-muted rounded-md p-4">
               <span className="text-sm font-medium block mb-1">Collection Time</span>
-              <div className="text-sm text-muted-foreground" data-testid="text-timestamp">
-                {new Date().toLocaleString()}
-              </div>
+              <DigitalClock className="text-sm text-muted-foreground" />
             </div>
           </div>
         </CardContent>

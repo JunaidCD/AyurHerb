@@ -14,7 +14,7 @@ export default function AppHeader() {
           <div className="flex items-center space-x-3">
             <i className="fas fa-leaf text-2xl"></i>
             <div>
-              <h1 className="text-lg font-semibold">Herb Collector</h1>
+              <h1 className="text-lg font-semibold">AyurHerb</h1>
               <p className="text-xs opacity-90">Ayurvedic Field Data</p>
             </div>
           </div>

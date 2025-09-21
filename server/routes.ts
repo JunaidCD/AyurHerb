@@ -37,18 +37,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Convert string numbers from FormData to actual numbers
       const processedBody = {
         ...req.body,
-        latitude: parseFloat(req.body.latitude),
-        longitude: parseFloat(req.body.longitude),
-        accuracy: req.body.accuracy ? parseFloat(req.body.accuracy) : null,
-        moistureContent: req.body.moistureContent ? parseFloat(req.body.moistureContent) : null,
-        weight: parseFloat(req.body.weight),
+        latitude: req.body?.latitude ? parseFloat(req.body.latitude) : 0,
+        longitude: req.body?.longitude ? parseFloat(req.body.longitude) : 0,
+        accuracy: req.body?.accuracy ? parseFloat(req.body.accuracy) : null,
+        moistureContent: req.body?.moistureContent ? parseFloat(req.body.moistureContent) : null,
+        weight: req.body?.weight ? parseFloat(req.body.weight) : 0,
       };
 
       const validatedData = insertCollectionSchema.parse(processedBody);
       
       // Add photo URL if file was uploaded
-      if ((req as any).file) {
-        validatedData.photoUrl = `/uploads/${(req as any).file.filename}`;
+      if (req.file) {
+        validatedData.photoUrl = `/uploads/${req.file.filename}`;
       }
 
       const collection = await storage.createCollection(validatedData);

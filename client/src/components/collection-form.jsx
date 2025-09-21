@@ -17,6 +17,7 @@ import { apiRequest } from "@/lib/queryClient";
 import { insertCollectionSchema } from "@shared/schema";
 import { z } from "zod";
 import DigitalClock from "@/components/digital-clock";
+import { useLocation } from "wouter";
 
 const formSchema = insertCollectionSchema.extend({
   qualityGrade: z.enum(["premium", "standard", "commercial", "low"]),
@@ -30,6 +31,7 @@ export default function CollectionForm() {
   const { capturePhoto, selectFromGallery } = useCamera();
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [, setLocation] = useLocation();
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -99,12 +101,17 @@ export default function CollectionForm() {
     onSuccess: (data) => {
       toast({
         title: "Collection Submitted!",
-        description: "Your data has been saved successfully.",
+        description: "Your data has been saved successfully. Redirecting to view your collections...",
       });
       queryClient.invalidateQueries({ queryKey: ['/api/collections'] });
       form.reset();
       setPhotoFile(null);
       setPhotoPreview(null);
+      
+      // Navigate to collections view after a short delay
+      setTimeout(() => {
+        setLocation('/collections');
+      }, 1500);
     },
     onError: (error) => {
       toast({
@@ -124,11 +131,16 @@ export default function CollectionForm() {
       });
       toast({
         title: "Collection Saved Offline!",
-        description: "Data will sync when connection is restored.",
+        description: "Data will sync when connection is restored. You can view your offline data in the collections view.",
       });
       form.reset();
       setPhotoFile(null);
       setPhotoPreview(null);
+      
+      // Navigate to collections view after a short delay
+      setTimeout(() => {
+        setLocation('/collections');
+      }, 1500);
     } else {
       submitMutation.mutate(data);
     }

@@ -78,7 +78,10 @@ export default function PendingSyncList() {
     }
   };
 
-  if (pendingItems.length === 0) {
+  // Always show sync interface for testing, even when no pending items
+  const showSyncInterface = pendingItems.length > 0 || import.meta.env.DEV;
+  
+  if (!showSyncInterface) {
     return null;
   }
 
@@ -91,36 +94,43 @@ export default function PendingSyncList() {
         </h3>
         
         <div className="space-y-3">
-          {pendingItems.map((item) => (
-            <div 
-              key={item.id} 
-              className="bg-muted rounded-md p-3 flex items-center justify-between"
-              data-testid={`card-pending-${item.id}`}
-            >
-              <div>
-                <div className="font-medium text-sm" data-testid={`text-species-${item.id}`}>
-                  {item.speciesName}
+          {pendingItems.length > 0 ? (
+            pendingItems.map((item) => (
+              <div 
+                key={item.id} 
+                className="bg-muted rounded-md p-3 flex items-center justify-between"
+                data-testid={`card-pending-${item.id}`}
+              >
+                <div>
+                  <div className="font-medium text-sm" data-testid={`text-species-${item.id}`}>
+                    {item.speciesName}
+                  </div>
+                  <div className="text-xs text-muted-foreground" data-testid={`text-timestamp-${item.id}`}>
+                    {new Date(item.timestamp).toLocaleString()}
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground" data-testid={`text-timestamp-${item.id}`}>
-                  {new Date(item.timestamp).toLocaleString()}
+                <div className="flex items-center space-x-2">
+                  <span className="bg-warning text-warning-foreground px-2 py-1 rounded text-xs">
+                    {item.isDraft ? 'Draft' : 'Queued'}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleRetryItem(item.id)}
+                    className="text-muted-foreground hover:text-foreground touch-target"
+                    data-testid={`button-retry-${item.id}`}
+                  >
+                    <i className="fas fa-sync-alt"></i>
+                  </Button>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
-                <span className="bg-warning text-warning-foreground px-2 py-1 rounded text-xs">
-                  {item.isDraft ? 'Draft' : 'Queued'}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleRetryItem(item.id)}
-                  className="text-muted-foreground hover:text-foreground touch-target"
-                  data-testid={`button-retry-${item.id}`}
-                >
-                  <i className="fas fa-sync-alt"></i>
-                </Button>
-              </div>
+            ))
+          ) : (
+            <div className="bg-muted/50 rounded-md p-4 text-center text-muted-foreground">
+              <i className="fas fa-check-circle text-success mb-2 text-lg block"></i>
+              <p className="text-sm">No pending collections to sync</p>
             </div>
-          ))}
+          )}
         </div>
         
         <div className="mt-4 pt-4 border-t border-border">

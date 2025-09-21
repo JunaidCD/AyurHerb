@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { getPendingCollections, syncPendingCollections, retrySync } from "@/lib/sync";
 
 export default function PendingSyncList() {
   const [pendingItems, setPendingItems] = useState([]);
   const [isSyncing, setIsSyncing] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     loadPendingItems();
@@ -33,7 +35,7 @@ export default function PendingSyncList() {
   const handleSyncAll = async () => {
     setIsSyncing(true);
     try {
-      const result = await syncPendingCollections();
+      const result = await syncPendingCollections(queryClient);
       
       if (result.success > 0) {
         toast({

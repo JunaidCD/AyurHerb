@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { saveCollection, getPendingCollections, markAsSynced, deleteCollection } from "./storage";
+import { saveCollection, getPendingCollections, markAsSynced, deleteCollection, triggerLocalCollectionsUpdate } from "./storage";
 import { apiRequest } from "./queryClient";
 
 // Re-export for components
@@ -9,7 +9,7 @@ export const saveOfflineCollection = async (collection) => {
   return await saveCollection(collection);
 };
 
-export const syncPendingCollections = async () => {
+export const syncPendingCollections = async (queryClient = null) => {
   const pending = await getPendingCollections();
   let success = 0;
   let failed = 0;
@@ -22,6 +22,16 @@ export const syncPendingCollections = async () => {
     } catch (error) {
       console.error(`Failed to sync collection ${item.id}:`, error);
       failed++;
+    }
+  }
+
+  // Trigger update after sync is complete
+  if (success > 0) {
+    triggerLocalCollectionsUpdate();
+    
+    // Also invalidate server collections query if queryClient is provided
+    if (queryClient) {
+      queryClient.invalidateQueries({ queryKey: ['/api/collections'] });
     }
   }
 

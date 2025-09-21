@@ -12,6 +12,11 @@ class HerbCollectorDB extends Dexie {
 
 export const db = new HerbCollectorDB();
 
+// Helper function to trigger local collections update event
+export const triggerLocalCollectionsUpdate = () => {
+  window.dispatchEvent(new CustomEvent('localCollectionsUpdated'));
+};
+
 export const saveCollection = async (collection) => {
   try {
     const id = await db.collections.add({
@@ -20,6 +25,7 @@ export const saveCollection = async (collection) => {
       synced: false,
       isDraft: collection.isDraft || false,
     });
+    triggerLocalCollectionsUpdate();
     return id;
   } catch (error) {
     console.error('Failed to save collection:', error);
@@ -39,6 +45,7 @@ export const getPendingCollections = async () => {
 export const markAsSynced = async (id) => {
   try {
     await db.collections.update(id, { synced: true });
+    triggerLocalCollectionsUpdate();
   } catch (error) {
     console.error('Failed to mark as synced:', error);
     throw error;
@@ -53,3 +60,22 @@ export const deleteCollection = async (id) => {
     throw error;
   }
 };
+
+export const getAllLocalCollections = async () => {
+  try {
+    return await db.collections.orderBy('timestamp').reverse().toArray();
+  } catch (error) {
+    console.error('Failed to get all local collections:', error);
+    throw error;
+  }
+};
+
+export const getLocalCollectionById = async (id) => {
+  try {
+    return await db.collections.get(id);
+  } catch (error) {
+    console.error('Failed to get local collection by id:', error);
+    throw error;
+  }
+};
+

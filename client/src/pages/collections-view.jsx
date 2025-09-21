@@ -1,24 +1,17 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import AppHeader from "@/components/app-header";
-import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
+import { useCollections } from "@/hooks/use-collections";
 
 export default function CollectionsView() {
   const [, setLocation] = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: collections = [], isLoading, error } = useQuery({
-    queryKey: ['/api/collections'],
-    queryFn: async () => {
-      const response = await apiRequest('GET', '/api/collections');
-      return response.json();
-    },
-  });
+  const { collections, isLoading, error, localCount, serverCount, totalCount } = useCollections();
 
   const filteredCollections = collections.filter(collection => 
     collection.speciesName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -124,9 +117,23 @@ export default function CollectionsView() {
 
         {/* Collections Count */}
         <div className="mb-4">
-          <p className="text-sm text-muted-foreground">
-            Showing {filteredCollections.length} of {collections.length} collections
-          </p>
+          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+            <span>
+              Showing {filteredCollections.length} of {totalCount} collections
+            </span>
+            {localCount > 0 && (
+              <span className="flex items-center text-yellow-600">
+                <i className="fas fa-clock mr-1"></i>
+                {localCount} pending sync
+              </span>
+            )}
+            {serverCount > 0 && (
+              <span className="flex items-center text-green-600">
+                <i className="fas fa-check-circle mr-1"></i>
+                {serverCount} synced
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Collections Grid */}
@@ -171,12 +178,15 @@ export default function CollectionsView() {
                 
                 <CardContent className="space-y-3">
                   {/* Photo */}
-                  {collection.photoUrl && (
+                  {(collection.photoUrl || collection.photoFile) && (
                     <div className="aspect-video bg-muted rounded-lg overflow-hidden">
                       <img 
-                        src={collection.photoUrl} 
+                        src={collection.photoUrl || (collection.photoFile instanceof File ? URL.createObjectURL(collection.photoFile) : '')} 
                         alt={`${collection.speciesName} photo`}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
                       />
                     </div>
                   )}
@@ -233,11 +243,17 @@ export default function CollectionsView() {
                         </span>
                       ) : (
                         <span className="text-yellow-600 flex items-center">
-                          <i className="fas fa-sync-alt mr-1"></i>
+                          <i className="fas fa-clock mr-1"></i>
                           Pending Sync
                         </span>
                       )}
                     </div>
+                    {collection.source === 'local' && (
+                      <div className="flex items-center text-xs text-blue-600">
+                        <i className="fas fa-mobile-alt mr-1"></i>
+                        Local
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

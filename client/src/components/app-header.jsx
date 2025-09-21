@@ -63,6 +63,7 @@ export default function AppHeader() {
                 <span data-testid="text-pending-count">{pendingCount}</span>
               </div>
             )}
+            
           </div>
         </div>
       </div>

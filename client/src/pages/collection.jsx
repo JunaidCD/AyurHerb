@@ -1,6 +1,7 @@
 import AppHeader from "@/components/app-header";
 import CollectionForm from "@/components/collection-form";
 import PendingSyncList from "@/components/pending-sync-list";
+import LogoutButton from "@/components/logout-button";
 import { useOffline } from "@/hooks/use-offline";
 import { useState, useEffect } from "react";
 
@@ -63,6 +64,8 @@ export default function Collection() {
           </div>
         )}
       </main>
+      
+      <LogoutButton />
     </div>
   );
 }

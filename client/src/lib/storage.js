@@ -79,3 +79,31 @@ export const getLocalCollectionById = async (id) => {
   }
 };
 
+// Clear all data for fresh start
+export const clearAllData = async () => {
+  try {
+    // Clear IndexedDB collections
+    await db.collections.clear();
+    
+    // Clear localStorage auth data
+    localStorage.removeItem('ayurherb_auth_token');
+    localStorage.removeItem('ayurherb_user_data');
+    localStorage.removeItem('ayurherb_app_initialized');
+    
+    console.log('All application data cleared');
+    triggerLocalCollectionsUpdate();
+  } catch (error) {
+    console.error('Failed to clear all data:', error);
+    throw error;
+  }
+};
+
+// Simple initialization - just for app setup, no automatic clearing
+export const initializeApp = async () => {
+  try {
+    console.log('AyurHerb app initialized');
+  } catch (error) {
+    console.error('Failed to initialize app:', error);
+  }
+};
+

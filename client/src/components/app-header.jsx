@@ -53,7 +53,18 @@ export default function AppHeader() {
             
             {/* Sync Status */}
             <div className="flex items-center space-x-1">
-              <i className={`fas ${isOffline ? 'fa-wifi-slash text-warning' : 'fa-wifi text-success'}`}></i>
+              <div className="relative">
+                {isOffline ? (
+                  <div className="relative">
+                    <i className="fas fa-wifi text-warning"></i>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-4 h-0.5 bg-red-500 transform rotate-45"></div>
+                    </div>
+                  </div>
+                ) : (
+                  <i className="fas fa-wifi text-success"></i>
+                )}
+              </div>
               <span className="text-xs hidden sm:inline">{isOffline ? 'Offline' : 'Online'}</span>
             </div>
             

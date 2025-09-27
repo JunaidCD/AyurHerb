@@ -21,6 +21,15 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint
+  app.head("/api/health", (req, res) => {
+    res.status(200).end();
+  });
+
+  app.get("/api/health", (req, res) => {
+    res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
   // Get all collections
   app.get("/api/collections", async (req, res) => {
     try {
